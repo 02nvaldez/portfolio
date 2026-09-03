@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel Administrativo — Nicolás Valdez</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <header class="header">
+    <a href="/" class="logo">NV / ADMIN</a>
+    <nav class="nav">
+      <a href="/" class="nav-link">Ver Portafolio</a>
+      <a href="/login" class="nav-link">Cerrar Sesión</a>
+    </nav>
+  </header>
+
+  <main class="admin-container">
+    <div class="admin-header">
+      <div>
+        <h1 class="auth-title">Panel de Control</h1>
+        <p class="auth-sub">Resumen de actividad y mensajes del portafolio</p>
+      </div>
+      <a href="/" class="button">
+        <span class="button_lg">
+          <span class="button_sl"></span>
+          <span class="button_text">+ Nuevo Proyecto</span>
+        </span>
+      </a>
+    </div>
+
+    <div class="admin-grid">
+      <div class="admin-stat-card">
+        <p class="admin-stat-val">4</p>
+        <p class="admin-stat-label">Proyectos Publicados</p>
+      </div>
+      <div class="admin-stat-card">
+        <p class="admin-stat-val">22</p>
+        <p class="admin-stat-label">Habilidades Listadas</p>
+      </div>
+      <div class="admin-stat-card">
+        <p class="admin-stat-val">12</p>
+        <p class="admin-stat-label">Mensajes Recibidos</p>
+      </div>
+    </div>
+
+    <div class="section-header">
+      <h2 class="section-title" style="font-size: 1.5rem;">Mensajes de Contacto Recientes</h2>
+    </div>
+
+    <div style="background: var(--card); border: 1px solid var(--border); padding: 1.5rem;">
+      <p style="color: var(--muted-foreground); font-family: var(--font-mono); font-size: 0.85rem;">
+        No hay mensajes nuevos pendientes de responder.
+      </p>
+    </div>
+  </main>
+</body>
+</html>

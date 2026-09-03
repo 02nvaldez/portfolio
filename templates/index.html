@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nicolás Valdez — Desarrollador de Software</title>
+  <meta name="description" content="Portafolio de Nicolás Valdez, desarrollador de software y estudiante de Ingeniería de Sistemas especializado en soluciones digitales funcionales y escalables.">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <a href="#" class="logo">NV</a>
+    <nav class="nav">
+      <button class="nav-link" data-scroll-to="work">Trabajo</button>
+      <button class="nav-link" data-scroll-to="skills">Habilidades</button>
+      <button class="nav-link" data-scroll-to="about">Sobre mí</button>
+      <button class="nav-link" data-scroll-to="contact">Contacto</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Hero -->
+    <section class="hero" id="hero">
+      <div class="hero-content">
+        <span class="hero-badge">Disponible para proyectos — Sept 2026</span>
+        <h1 class="hero-title">
+          Nicolás<br>
+          <span class="accent">Valdez</span>
+        </h1>
+        <p class="hero-subtitle">
+          Desarrollador de Software &amp; Estudiante de Ingeniería de Sistemas
+        </p>
+        <p class="hero-desc">
+          Apasionado por transformar ideas en soluciones digitales funcionales, escalables y visualmente atractivas. Explora mis proyectos y descubre lo que puedo construir.
+        </p>
+        <button class="button" data-scroll-to="work">
+          <span class="button_lg">
+            <span class="button_sl"></span>
+            <span class="button_text">Ver trabajo ↓</span>
+          </span>
+        </button>
+      </div>
+
+      <!-- Scroll indicator -->
+      <div class="hero-scroll" aria-hidden="true">
+        <span>Scroll</span>
+        <div class="line"></div>
+      </div>
+    </section>
+
+    <!-- Work -->
+    <section class="section" id="work">
+      <div class="section-header">
+        <h2 class="section-title">Trabajo Seleccionado</h2>
+        <span class="section-badge">04 proyectos</span>
+      </div>
+
+      <div class="work-grid">
+        <!-- Project 1 -->
+        <article class="project-card" data-accent="#149CEA">
+          <div class="project-thumb">
+            <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&h=450&fit=crop&auto=format" alt="Meridian Design System">
+            <div class="project-accent-overlay"></div>
+            <span class="project-year">2024</span>
+          </div>
+          <div class="project-body">
+            <p class="project-category">Sistema de Diseño · React</p>
+            <h3 class="project-title">Meridian Design System</h3>
+            <p class="project-desc">
+              Librería de componentes utilizada por 12 equipos de producto. Redujo la inconsistencia visual en un 80% y el tiempo de handoff de diseño a desarrollo de 3 días a medio día.
+            </p>
+            <div class="project-tags">
+              <span class="project-tag">React</span>
+              <span class="project-tag">TypeScript</span>
+              <span class="project-tag">Storybook</span>
+              <span class="project-tag">Figma</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Project 2 -->
+        <article class="project-card" data-accent="#4ecdc4">
+          <div class="project-thumb">
+            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=450&fit=crop&auto=format" alt="Cartograph Analytics">
+            <div class="project-accent-overlay"></div>
+            <span class="project-year">2024</span>
+          </div>
+          <div class="project-body">
+            <p class="project-category">Visualización de Datos · Full Stack</p>
+            <h3 class="project-title">Cartograph Analytics</h3>
+            <p class="project-desc">
+              Plataforma de análisis geoespacial en tiempo real que procesa más de 2M de eventos por hora. Desarrollé un renderizador WebGL propio que redujo el tiempo de render de 4.2s a 180ms.
+            </p>
+            <div class="project-tags">
+              <span class="project-tag">Next.js</span>
+              <span class="project-tag">WebGL</span>
+              <span class="project-tag">PostgreSQL</span>
+              <span class="project-tag">Redis</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Project 3 -->
+        <article class="project-card" data-accent="#f7c06e">
+          <div class="project-thumb">
+            <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&h=450&fit=crop&auto=format" alt="Folio CMS">
+            <div class="project-accent-overlay"></div>
+            <span class="project-year">2023</span>
+          </div>
+          <div class="project-body">
+            <p class="project-category">SaaS · Backend</p>
+            <h3 class="project-title">Folio CMS</h3>
+            <p class="project-desc">
+              CMS headless con constructor visual de consultas. 340 equipos de pago, $42k MRR. Construido en solitario en 8 meses, posteriormente adquirido por una startup de infraestructura de contenido.
+            </p>
+            <div class="project-tags">
+              <span class="project-tag">Node.js</span>
+              <span class="project-tag">GraphQL</span>
+              <span class="project-tag">React</span>
+              <span class="project-tag">AWS</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Project 4 -->
+        <article class="project-card" data-accent="#ff6b9d">
+          <div class="project-thumb">
+            <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&h=450&fit=crop&auto=format" alt="Pulse Notification Engine">
+            <div class="project-accent-overlay"></div>
+            <span class="project-year">2023</span>
+          </div>
+          <div class="project-body">
+            <p class="project-category">Infraestructura · Open Source</p>
+            <h3 class="project-title">Pulse Notification Engine</h3>
+            <p class="project-desc">
+              Sistema de orquestación de notificaciones multicanal. 4.7k estrellas en GitHub, usado en producción por más de 200 empresas que envían 50M+ notificaciones al mes.
+            </p>
+            <div class="project-tags">
+              <span class="project-tag">Go</span>
+              <span class="project-tag">Kafka</span>
+              <span class="project-tag">Docker</span>
+              <span class="project-tag">Kubernetes</span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Skills -->
+    <section class="section" id="skills">
+      <div class="section-header">
+        <h2 class="section-title">Habilidades &amp; Herramientas</h2>
+      </div>
+
+      <div class="skills-grid">
+        <div class="skill-group">
+          <p class="skill-group-title">Frontend</p>
+          <ul class="skill-list">
+            <li class="skill-item"><span class="skill-bullet">◆</span> React</li>
+            <li class="skill-item"><span class="skill-bullet">◆</span> Next.js</li>
+            <li class="skill-item"><span class="skill-bullet">◆</span> TypeScript</li>
+            <li class="skill-item"><span class="skill-bullet">◆</span> WebGL</li>
+            <li class="skill-item"><span class="skill-bullet">◆</span> CSS / Tailwind</li>
+            <li class="skill-item"><span class="skill-bullet">◆</span> Framer Motion</li>
+          </ul>
+        </div>
+
+        <div class="skill-group">
+          <p class="skill-group-title">Backend</p>
+          <ul class="skill-list">
+            <li class="skill-item"><span class="skill-bullet">◆</span> Python / Flask</li>
+            <li class="skill-item"><span class="skill-bullet">◆</span> Node.js</li>
+            <li class="skill-item"><span class="skill-bullet">◆</span> Go</li>
+            <li class="skill-item"><span class="skill-bullet">◆</span> GraphQL</li>
+            <li class="skill-item"><span class="skill-bullet">◆</span> REST APIs</li>
+            <li class="skill-item"><span class="skill-bullet">◆</span> PostgreSQL / Redis</li>
+          </ul>
+        </div>
+
+        <div class="skill-group">
+          <p class="skill-group-title">Infraestructura</p>
+          <ul class="skill-list">
+            <li class="skill-item"><span class="skill-bullet">◆</span> AWS</li>
+            <li class="skill-item"><span class="skill-bullet">◆</span> Docker</li>
+            <li class="skill-item"><span class="skill-bullet">◆</span> Kubernetes</li>
+            <li class="skill-item"><span class="skill-bullet">◆</span> Kafka</li>
+            <li class="skill-item"><span class="skill-bullet">◆</span> Terraform</li>
+            <li class="skill-item"><span class="skill-bullet">◆</span> CI/CD</li>
+          </ul>
+        </div>
+
+        <div class="skill-group">
+          <p class="skill-group-title">Oficio</p>
+          <ul class="skill-list">
+            <li class="skill-item"><span class="skill-bullet">◆</span> Sistemas de Diseño</li>
+            <li class="skill-item"><span class="skill-bullet">◆</span> Accesibilidad</li>
+            <li class="skill-item"><span class="skill-bullet">◆</span> Rendimiento</li>
+            <li class="skill-item"><span class="skill-bullet">◆</span> Open Source</li>
+            <li class="skill-item"><span class="skill-bullet">◆</span> Escritura Técnica</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- About -->
+    <section class="section" id="about">
+      <div class="about-grid">
+        <div>
+          <p class="about-eyebrow">Sobre mí</p>
+          <h2 class="about-heading">
+            Construyendo cosas que <span class="accent">realmente funcionan</span>
+          </h2>
+          <div class="about-text">
+            <p>
+              Tengo 19 años y soy estudiante de 5.º semestre de Ingeniería de Sistemas en la Universidad Santiago de Cali, titulado como Técnico en Diseño, Desarrollo y Programación de Software por el SENA.
+            </p>
+            <p>
+              Mi enfoque combina la precisión de la ingeniería con la lógica de programación y el diseño funcional para crear aplicaciones web sólidas, optimizadas y listas para el entorno real. Disfruto abordar nuevos retos técnicos, aprender tecnologías emergentes y construir herramientas que generen un impacto positivo.
+            </p>
+          </div>
+        </div>
+
+        <!-- Foto carnet -->
+        <div class="about-photo-wrap">
+          <div class="about-photo-card">
+            <img src="https://images.unsplash.com/photo-1705645930353-0e335311ef20?w=400&h=533&fit=crop&auto=format" alt="Nicolás Valdez">
+            <div class="about-photo-caption">
+              <p class="about-photo-name">Nicolás Valdez</p>
+              <p class="about-photo-sub">Ing. Sistemas · SENA</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section class="section" id="contact">
+      <div class="contact-grid">
+        <div>
+          <p class="contact-eyebrow">Contacto</p>
+          <h2 class="contact-heading">
+            Construyamos algo <span class="accent">juntos</span>
+          </h2>
+          <p class="contact-desc">
+            Disponible para proyectos freelance, consultorías y oportunidades profesionales. Normalmente respondo en menos de 24 horas.
+          </p>
+
+          <div class="contact-links">
+            <div class="contact-link-row">
+              <span class="contact-label">Email</span>
+              <a href="mailto:nicovalman0206@gmail.com" class="contact-val">nicovalman0206@gmail.com</a>
+            </div>
+            <div class="contact-link-row">
+              <span class="contact-label">GitHub</span>
+              <a href="https://github.com/02nvaldez" target="_blank" rel="noopener noreferrer" class="contact-val">@02nvaldez</a>
+            </div>
+            <div class="contact-link-row">
+              <span class="contact-label">LinkedIn</span>
+              <a href="https://linkedin.com/in/nicolas-valdez" target="_blank" rel="noopener noreferrer" class="contact-val">nicolas-valdez</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Formulario -->
+        <div id="contact-form-wrapper">
+          <form id="contact-form" class="contact-form" action="/contact" method="POST">
+            <div class="input-container">
+              <input type="text" id="name" name="name" required placeholder=" ">
+              <label for="name" class="label">Nombre completo</label>
+              <span class="underline"></span>
+            </div>
+
+            <div class="input-container">
+              <input type="email" id="email" name="email" required placeholder=" ">
+              <label for="email" class="label">Correo electrónico</label>
+              <span class="underline"></span>
+            </div>
+
+            <div class="input-container">
+              <textarea id="message" name="message" rows="4" required placeholder=" "></textarea>
+              <label for="message" class="label">Tu mensaje</label>
+              <span class="underline"></span>
+            </div>
+
+            <button type="submit" class="button" style="width: 100%;">
+              <span class="button_lg" style="text-align: center;">
+                <span class="button_sl"></span>
+                <span class="button_text">Enviar mensaje →</span>
+              </span>
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>© 2026 Nicolás Valdez — Cali, Colombia</p>
+    <p>Construido con Python · Flask · HTML5 · CSS3</p>
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

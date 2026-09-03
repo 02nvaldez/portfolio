@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acceso Administrativo — Nicolás Valdez</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <div class="auth-page">
+    <div class="auth-card">
+      <div class="auth-header">
+        <a href="/" class="logo" style="display: block; margin-bottom: 1.5rem;">NV</a>
+        <h1 class="auth-title">Iniciar Sesión</h1>
+        <p class="auth-sub">Panel de administración del portafolio</p>
+      </div>
+
+      <form action="/login" method="POST">
+        <div class="input-container">
+          <input type="text" id="username" name="username" required placeholder=" ">
+          <label for="username" class="label">Usuario</label>
+          <span class="underline"></span>
+        </div>
+
+        <div class="input-container">
+          <input type="password" id="password" name="password" required placeholder=" ">
+          <label for="password" class="label">Contraseña</label>
+          <span class="underline"></span>
+        </div>
+
+        <button type="submit" class="button" style="width: 100%;">
+          <span class="button_lg" style="text-align: center;">
+            <span class="button_sl"></span>
+            <span class="button_text">Ingresar →</span>
+          </span>
+        </button>
+
+        <div style="text-align: center; margin-top: 1rem;">
+          <a href="/" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted-foreground);">
+            ← Volver al inicio
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+</html>
