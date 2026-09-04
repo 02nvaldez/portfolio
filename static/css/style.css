@@ -1,37 +1,37 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap");
 
 :root {
   --background: #0d0d0f;
   --foreground: #e8e6e1;
   --card: #141417;
   --card-foreground: #e8e6e1;
-  --primary: #149CEA;
+  --primary: #149cea;
   --primary-foreground: #ffffff;
   --secondary: #1e1e24;
   --secondary-foreground: #a3a0a8;
   --muted: #1a1a20;
   --muted-foreground: #6b6875;
-  --accent: #149CEA;
+  --accent: #149cea;
   --accent-foreground: #ffffff;
   --border: rgba(255, 255, 255, 0.07);
-  --ring: #149CEA;
+  --ring: #149cea;
   --radius: 4px;
 
   --header-bg: linear-gradient(to bottom, #0d0d0f 65%, transparent);
-  --button-border: #7D8082;
+  --button-border: #7d8082;
   --button-bg: #0f1923;
   --button-text: #e8e6e1;
   --input-border: rgba(255, 255, 255, 0.15);
   --thumb-img-opacity: 0.35;
   --thumb-img-hover-opacity: 0.55;
 
-  --font-display: 'Space Grotesk', sans-serif;
-  --font-body: 'Plus Jakarta Sans', sans-serif;
-  --font-para: 'Bricolage Grotesque', sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  --font-display: "Space Grotesk", sans-serif;
+  --font-body: "Plus Jakarta Sans", sans-serif;
+  --font-para: "Bricolage Grotesque", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
 }
 
 [data-theme="light"] {
@@ -50,7 +50,11 @@
   --border: rgba(15, 23, 42, 0.08);
   --ring: #0284c7;
 
-  --header-bg: linear-gradient(to bottom, rgba(248, 250, 252, 0.92) 65%, transparent);
+  --header-bg: linear-gradient(
+    to bottom,
+    rgba(248, 250, 252, 0.92) 65%,
+    transparent
+  );
   --button-border: #94a3b8;
   --button-bg: #0f172a;
   --button-text: #ffffff;
@@ -59,7 +63,9 @@
   --thumb-img-hover-opacity: 1;
 }
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -84,7 +90,9 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
 
 p {
@@ -147,7 +155,6 @@ a {
 .hero {
   min-height: 100vh;
   display: flex;
-  flex-col: column;
   flex-direction: column;
   justify-content: flex-end;
   padding: 8rem 2rem 6rem;
@@ -230,8 +237,15 @@ a {
 }
 
 @keyframes scrollPulse {
-  0%, 100% { transform: scaleY(0.6); opacity: 0.4; }
-  50% { transform: scaleY(1); opacity: 1; }
+  0%,
+  100% {
+    transform: scaleY(0.6);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
 }
 
 /* Button Component */
@@ -255,7 +269,7 @@ a {
 
 .button::before,
 .button::after {
-  content: '';
+  content: "";
   display: block;
   position: absolute;
   right: 0;
@@ -305,7 +319,7 @@ a {
 }
 
 .button_lg::before {
-  content: '';
+  content: "";
   display: block;
   position: absolute;
   top: 0;
@@ -316,7 +330,7 @@ a {
 }
 
 .button_lg::after {
-  content: '';
+  content: "";
   display: block;
   position: absolute;
   right: 0;
@@ -425,7 +439,9 @@ a {
   height: 100%;
   object-fit: cover;
   opacity: var(--thumb-img-opacity);
-  transition: transform 0.7s ease, opacity 0.3s ease;
+  transition:
+    transform 0.7s ease,
+    opacity 0.3s ease;
 }
 
 .project-card:hover .project-thumb img {
@@ -619,7 +635,11 @@ a {
   left: 0;
   right: 0;
   padding: 1.25rem 1rem 0.85rem;
-  background: linear-gradient(to top, rgba(13, 13, 15, 0.95) 0%, transparent 100%);
+  background: linear-gradient(
+    to top,
+    rgba(13, 13, 15, 0.95) 0%,
+    transparent 100%
+  );
 }
 
 .about-photo-name {
@@ -917,7 +937,7 @@ a {
 }
 
 .toggle {
-  background-color: #16161A;
+  background-color: #16161a;
   width: 56px;
   height: 56px;
   border-radius: 50%;
@@ -926,8 +946,12 @@ a {
   cursor: pointer;
   box-shadow: 0 4px 25px rgba(0, 0, 0, 0.4);
   line-height: 1;
-  border: 0.5px solid #2B2B2B;
-  transition: transform 0.25s ease, box-shadow 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+  border: 0.5px solid #2b2b2b;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.3s ease,
+    background-color 0.3s ease,
+    border-color 0.3s ease;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
 }
@@ -961,7 +985,7 @@ a {
 }
 
 .icon--sun {
-  color: #16161A;
+  color: #16161a;
   transform: scale(0);
 }
 
@@ -977,7 +1001,7 @@ a {
 /* Light Theme overrides for the button */
 [data-theme="light"] .toggle {
   background-color: #ffffff;
-  border: 0.5px solid #2B2B2B;
+  border: 0.5px solid #2b2b2b;
   box-shadow: 0 6px 25px rgba(0, 0, 0, 0.08);
 }
 
@@ -990,7 +1014,7 @@ a {
 }
 
 [data-theme="light"] .icon--sun {
-  color: #16161A;
+  color: #16161a;
 }
 
 /* Responsive adjustments */

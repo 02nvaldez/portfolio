@@ -10,6 +10,9 @@ def home():
 
 @app.route("/contact", methods=["POST"])
 def contact():
+    """Recibe el mensaje del formulario de contacto, lo imprime en la consola y le informa al usuario que su mensaje se recibio correctamente."""
+
+
     if request.is_json:
         data = request.get_json()
     else:
