@@ -1,4 +1,38 @@
 document.addEventListener('DOMContentLoaded', () => {
+  // Theme Toggle (Dark / Light Mode)
+  const themeSwitch = document.getElementById('switch');
+
+  function applyTheme(theme) {
+    if (theme === 'light') {
+      document.documentElement.setAttribute('data-theme', 'light');
+      if (themeSwitch) themeSwitch.checked = true;
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+      if (themeSwitch) themeSwitch.checked = false;
+    }
+  }
+
+  // Sync initial theme
+  const savedTheme = localStorage.getItem('portfolio-theme');
+  const currentTheme = document.documentElement.getAttribute('data-theme');
+  if (savedTheme) {
+    applyTheme(savedTheme);
+  } else if (currentTheme === 'light') {
+    applyTheme('light');
+  }
+
+  if (themeSwitch) {
+    themeSwitch.addEventListener('change', () => {
+      const newTheme = themeSwitch.checked ? 'light' : 'dark';
+      applyTheme(newTheme);
+      try {
+        localStorage.setItem('portfolio-theme', newTheme);
+      } catch (e) {
+        console.error('Failed to save theme in localStorage', e);
+      }
+    });
+  }
+
   // Smooth scroll for anchor buttons
   const scrollButtons = document.querySelectorAll('[data-scroll-to]');
   scrollButtons.forEach(btn => {

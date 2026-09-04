@@ -1,12 +1,25 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Nicolás Valdez — Desarrollador de Software</title>
-  <meta name="description" content="Portafolio de Nicolás Valdez, desarrollador de software y estudiante de Ingeniería de Sistemas especializado en soluciones digitales funcionales y escalables.">
+  <meta name="description"
+    content="Portafolio de Nicolás Valdez, desarrollador de software y estudiante de Ingeniería de Sistemas especializado en soluciones digitales funcionales y escalables.">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script>
+    (function() {
+      try {
+        var theme = localStorage.getItem('portfolio-theme');
+        if (theme === 'light') {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      } catch (e) {}
+    })();
+  </script>
 </head>
+
 <body>
 
   <!-- Header -->
@@ -24,7 +37,7 @@
     <!-- Hero -->
     <section class="hero" id="hero">
       <div class="hero-content">
-        <span class="hero-badge">Disponible para proyectos — Sept 2026</span>
+        <span class="hero-badge">Disponible para proyectos</span>
         <h1 class="hero-title">
           Nicolás<br>
           <span class="accent">Valdez</span>
@@ -33,7 +46,8 @@
           Desarrollador de Software &amp; Estudiante de Ingeniería de Sistemas
         </p>
         <p class="hero-desc">
-          Apasionado por transformar ideas en soluciones digitales funcionales, escalables y visualmente atractivas. Explora mis proyectos y descubre lo que puedo construir.
+          Apasionado por transformar ideas en soluciones digitales funcionales, escalables y visualmente atractivas.
+          Explora mis proyectos y descubre lo que puedo construir.
         </p>
         <button class="button" data-scroll-to="work">
           <span class="button_lg">
@@ -61,7 +75,8 @@
         <!-- Project 1 -->
         <article class="project-card" data-accent="#149CEA">
           <div class="project-thumb">
-            <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&h=450&fit=crop&auto=format" alt="Meridian Design System">
+            <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&h=450&fit=crop&auto=format"
+              alt="Meridian Design System">
             <div class="project-accent-overlay"></div>
             <span class="project-year">2024</span>
           </div>
@@ -69,7 +84,8 @@
             <p class="project-category">Sistema de Diseño · React</p>
             <h3 class="project-title">Meridian Design System</h3>
             <p class="project-desc">
-              Librería de componentes utilizada por 12 equipos de producto. Redujo la inconsistencia visual en un 80% y el tiempo de handoff de diseño a desarrollo de 3 días a medio día.
+              Librería de componentes utilizada por 12 equipos de producto. Redujo la inconsistencia visual en un 80% y
+              el tiempo de handoff de diseño a desarrollo de 3 días a medio día.
             </p>
             <div class="project-tags">
               <span class="project-tag">React</span>
@@ -83,7 +99,8 @@
         <!-- Project 2 -->
         <article class="project-card" data-accent="#4ecdc4">
           <div class="project-thumb">
-            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=450&fit=crop&auto=format" alt="Cartograph Analytics">
+            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=450&fit=crop&auto=format"
+              alt="Cartograph Analytics">
             <div class="project-accent-overlay"></div>
             <span class="project-year">2024</span>
           </div>
@@ -91,7 +108,8 @@
             <p class="project-category">Visualización de Datos · Full Stack</p>
             <h3 class="project-title">Cartograph Analytics</h3>
             <p class="project-desc">
-              Plataforma de análisis geoespacial en tiempo real que procesa más de 2M de eventos por hora. Desarrollé un renderizador WebGL propio que redujo el tiempo de render de 4.2s a 180ms.
+              Plataforma de análisis geoespacial en tiempo real que procesa más de 2M de eventos por hora. Desarrollé un
+              renderizador WebGL propio que redujo el tiempo de render de 4.2s a 180ms.
             </p>
             <div class="project-tags">
               <span class="project-tag">Next.js</span>
@@ -105,7 +123,8 @@
         <!-- Project 3 -->
         <article class="project-card" data-accent="#f7c06e">
           <div class="project-thumb">
-            <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&h=450&fit=crop&auto=format" alt="Folio CMS">
+            <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&h=450&fit=crop&auto=format"
+              alt="Folio CMS">
             <div class="project-accent-overlay"></div>
             <span class="project-year">2023</span>
           </div>
@@ -113,7 +132,8 @@
             <p class="project-category">SaaS · Backend</p>
             <h3 class="project-title">Folio CMS</h3>
             <p class="project-desc">
-              CMS headless con constructor visual de consultas. 340 equipos de pago, $42k MRR. Construido en solitario en 8 meses, posteriormente adquirido por una startup de infraestructura de contenido.
+              CMS headless con constructor visual de consultas. 340 equipos de pago, $42k MRR. Construido en solitario
+              en 8 meses, posteriormente adquirido por una startup de infraestructura de contenido.
             </p>
             <div class="project-tags">
               <span class="project-tag">Node.js</span>
@@ -127,7 +147,8 @@
         <!-- Project 4 -->
         <article class="project-card" data-accent="#ff6b9d">
           <div class="project-thumb">
-            <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&h=450&fit=crop&auto=format" alt="Pulse Notification Engine">
+            <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&h=450&fit=crop&auto=format"
+              alt="Pulse Notification Engine">
             <div class="project-accent-overlay"></div>
             <span class="project-year">2023</span>
           </div>
@@ -135,7 +156,8 @@
             <p class="project-category">Infraestructura · Open Source</p>
             <h3 class="project-title">Pulse Notification Engine</h3>
             <p class="project-desc">
-              Sistema de orquestación de notificaciones multicanal. 4.7k estrellas en GitHub, usado en producción por más de 200 empresas que envían 50M+ notificaciones al mes.
+              Sistema de orquestación de notificaciones multicanal. 4.7k estrellas en GitHub, usado en producción por
+              más de 200 empresas que envían 50M+ notificaciones al mes.
             </p>
             <div class="project-tags">
               <span class="project-tag">Go</span>
@@ -204,10 +226,13 @@
           </h2>
           <div class="about-text">
             <p>
-              Tengo 19 años y soy estudiante de 5.º semestre de Ingeniería de Sistemas en la Universidad Santiago de Cali, titulado como Técnico en Diseño, Desarrollo y Programación de Software por el SENA.
+              Tengo 19 años y soy estudiante de 5.º semestre de Ingeniería de Sistemas en la Universidad Santiago de
+              Cali, titulado como Técnico en Diseño, Desarrollo y Programación de Software por el SENA.
             </p>
             <p>
-              Mi enfoque combina la precisión de la ingeniería con la lógica de programación y el diseño funcional para crear aplicaciones web sólidas, optimizadas y listas para el entorno real. Disfruto abordar nuevos retos técnicos, aprender tecnologías emergentes y construir herramientas que generen un impacto positivo.
+              Mi enfoque combina la precisión de la ingeniería con la lógica de programación y el diseño funcional para
+              crear aplicaciones web sólidas, optimizadas y listas para el entorno real. Disfruto abordar nuevos retos
+              técnicos, aprender tecnologías emergentes y construir herramientas que generen un impacto positivo.
             </p>
           </div>
         </div>
@@ -215,7 +240,8 @@
         <!-- Foto carnet -->
         <div class="about-photo-wrap">
           <div class="about-photo-card">
-            <img src="https://images.unsplash.com/photo-1705645930353-0e335311ef20?w=400&h=533&fit=crop&auto=format" alt="Nicolás Valdez">
+            <img src="https://images.unsplash.com/photo-1705645930353-0e335311ef20?w=400&h=533&fit=crop&auto=format"
+              alt="Nicolás Valdez">
             <div class="about-photo-caption">
               <p class="about-photo-name">Nicolás Valdez</p>
               <p class="about-photo-sub">Ing. Sistemas · SENA</p>
@@ -234,7 +260,8 @@
             Construyamos algo <span class="accent">juntos</span>
           </h2>
           <p class="contact-desc">
-            Disponible para proyectos freelance, consultorías y oportunidades profesionales. Normalmente respondo en menos de 24 horas.
+            Disponible para proyectos freelance, consultorías y oportunidades profesionales. Normalmente respondo en
+            menos de 24 horas.
           </p>
 
           <div class="contact-links">
@@ -244,11 +271,13 @@
             </div>
             <div class="contact-link-row">
               <span class="contact-label">GitHub</span>
-              <a href="https://github.com/02nvaldez" target="_blank" rel="noopener noreferrer" class="contact-val">@02nvaldez</a>
+              <a href="https://github.com/02nvaldez" target="_blank" rel="noopener noreferrer"
+                class="contact-val">@02nvaldez</a>
             </div>
             <div class="contact-link-row">
               <span class="contact-label">LinkedIn</span>
-              <a href="https://linkedin.com/in/nicolas-valdez" target="_blank" rel="noopener noreferrer" class="contact-val">nicolas-valdez</a>
+              <a href="https://linkedin.com/in/nicolas-valdez" target="_blank" rel="noopener noreferrer"
+                class="contact-val">nicolas-valdez</a>
             </div>
           </div>
         </div>
@@ -292,6 +321,43 @@
     <p>Construido con Python · Flask · HTML5 · CSS3</p>
   </footer>
 
+  <!-- Floating Theme Switch -->
+  <div class="container theme-toggle-container">
+    <label for="switch" class="toggle" aria-label="Cambiar modo claro / oscuro" title="Cambiar tema">
+      <input type="checkbox" class="input" id="switch" />
+      <div class="icon icon--moon">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          width="32"
+          height="32"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 003.463-.69.75.75 0 01.981.98 10.503 10.503 0 01-9.694 6.46c-5.799 0-10.5-4.701-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 01.818.162z"
+            clip-rule="evenodd"
+          ></path>
+        </svg>
+      </div>
+
+      <div class="icon icon--sun">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          width="32"
+          height="32"
+        >
+          <path
+            d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z"
+          ></path>
+        </svg>
+      </div>
+    </label>
+  </div>
+
   <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
+
 </html>
