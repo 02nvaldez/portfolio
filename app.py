@@ -69,6 +69,15 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 
 def allowed_file(filename):
+    """
+    Valida si la extensión del archivo subido está permitida.
+
+    Parámetros:
+        filename (str): Nombre del archivo a validar.
+
+    Retorna:
+        bool: True si la extensión está dentro de ALLOWED_EXTENSIONS, False en caso contrario.
+    """
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
@@ -262,6 +271,15 @@ class User(UserMixin):
 
 @login_manager.user_loader
 def load_user(user_id):
+    """
+    Función de callback para Flask-Login encargada de recargar el objeto de usuario desde la sesión.
+
+    Parámetros:
+        user_id (str | int): Identificador único del usuario almacenado en la sesión.
+
+    Retorna:
+        User | None: Instancia del modelo User si se encuentra en la base de datos, o None en caso contrario.
+    """
     with get_db() as conn:
         row = conn.execute("SELECT id, username FROM users WHERE id = ?", (user_id,)).fetchone()
     if row:
@@ -270,7 +288,18 @@ def load_user(user_id):
 
 
 def record_page_view(path="/"):
-    """Registra una visualización de página evitando bots comunes y administradores logueados."""
+    """
+    Registra una visualización de página en la base de datos para analíticas internas.
+
+    Comportamiento:
+        - Descarta peticiones realizadas por administradores autenticados para evitar sesgo en las métricas.
+        - Filtra rastreadores y bots conocidos mediante inspección del User-Agent.
+        - Genera un hash SHA-256 anónimo de la dirección IP para contabilizar visitantes únicos protegiendo la privacidad.
+        - Almacena el timestamp exacto configurado en la zona horaria colombiana (UTC-5).
+
+    Parámetros:
+        path (str): Ruta relativa de la página visualizada (por defecto '/').
+    """
     try:
         # Si el usuario es el administrador autenticado, no inflar métricas
         if current_user.is_authenticated:
@@ -301,6 +330,18 @@ def record_page_view(path="/"):
 # ── Routes ──────────────────────────────────────────────────────────────────────
 @app.route("/")
 def home():
+    """
+    Ruta principal del portafolio.
+
+    Acciones:
+        - Registra la visualización de la página mediante record_page_view.
+        - Consulta los proyectos publicados ordenados desde el más reciente.
+        - Consulta y clasifica las habilidades técnicas agrupadas por su categoría.
+        - Renderiza la plantilla principal 'index.html' con los datos dinámicos.
+
+    Retorna:
+        str: HTML renderizado de la página principal.
+    """
     record_page_view(path="/")
     with get_db() as conn:
         rows = conn.execute("SELECT * FROM projects ORDER BY id DESC").fetchall()
@@ -324,7 +365,19 @@ def home():
 
 @app.route("/contact", methods=["POST"])
 def contact():
-    """Recibe el mensaje del formulario de contacto y lo almacena en la base de datos."""
+    """
+    Procesa el envío del formulario de contacto (vía AJAX JSON o petición POST estándar).
+
+    Acciones:
+        - Extrae nombre, mensaje, número de WhatsApp, indicativo internacional y correo (opcional).
+        - Concatena el indicativo internacional con el número de teléfono.
+        - Valida que nombre, WhatsApp y mensaje estén presentes.
+        - Inserta el mensaje en la base de datos con la marca de tiempo de Colombia.
+        - Devuelve una respuesta JSON si la petición fue asíncrona o redirige a la página principal.
+
+    Retorna:
+        Response: Objeto JSON con estado de éxito (HTTP 200) o redirección a home.
+    """
 
     if request.is_json:
         data = request.get_json()
@@ -365,7 +418,18 @@ def contact():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    """Muestra el formulario de login y autentica al usuario."""
+    """
+    Gestiona la autenticación de usuarios en el panel administrativo.
+
+    Comportamiento:
+        - GET: Muestra la vista del formulario de inicio de sesión ('login.html'). Si el usuario ya está autenticado, lo redirige al panel.
+        - POST: Valida el nombre de usuario y verifica el hash de la contraseña con Werkzeug.
+        - En caso de credenciales válidas, inicia sesión con Flask-Login y redirige al panel o a la URL previa.
+        - En caso de error, renderiza la vista mostrando un mensaje de error.
+
+    Retorna:
+        str | Response: HTML renderizado de login o redirección al panel administrativo.
+    """
 
     if current_user.is_authenticated:
         return redirect(url_for("admin"))
@@ -396,7 +460,16 @@ def login():
 @app.route("/logout")
 @login_required
 def logout():
-    """Cierra la sesión del usuario."""
+    """
+    Cierra la sesión activa del usuario administrador.
+
+    Acciones:
+        - Invoca logout_user() de Flask-Login para destruir la sesión del usuario actual.
+        - Redirige al formulario de inicio de sesión.
+
+    Retorna:
+        Response: Redirección hacia la ruta de login.
+    """
     logout_user()
     return redirect(url_for("login"))
 
@@ -404,7 +477,19 @@ def logout():
 @app.route("/admin")
 @login_required
 def admin():
-    """Panel de administración con proyectos, habilidades y mensajes."""
+    """
+    Panel de administración principal (Dashboard).
+
+    Acciones:
+        - Obtiene todos los proyectos almacenados y procesa sus etiquetas.
+        - Obtiene las habilidades técnicas y la lista de categorías únicas disponibles.
+        - Consulta los últimos 20 mensajes de contacto recibidos, formatea sus fechas a hora colombiana y prepara el enlace de respuesta a WhatsApp.
+        - Calcula estadísticas clave: visualizaciones totales, visitantes únicos y visualizaciones del día actual.
+        - Renderiza la plantilla 'admin.html'.
+
+    Retorna:
+        str: HTML renderizado del panel de administración.
+    """
     with get_db() as conn:
         project_rows = conn.execute("SELECT * FROM projects ORDER BY id DESC").fetchall()
         projects = []
@@ -469,7 +554,18 @@ def admin():
 @app.route("/admin/projects/new", methods=["POST"])
 @login_required
 def add_project():
-    """Recibe y guarda un nuevo proyecto desde el panel de admin."""
+    """
+    Crea y almacena un nuevo proyecto en la base de datos.
+
+    Acciones:
+        - Obtiene título, categoría, año, color de acento, descripción, tags y URL externa.
+        - Procesa la imagen del proyecto: permite subir un archivo físico a static/uploads/ o proporcionar una URL directa.
+        - Inserta el registro en la tabla 'projects'.
+        - Redirige al panel de administración.
+
+    Retorna:
+        Response: Redirección hacia la vista del panel administrativo.
+    """
     title = request.form.get("title", "").strip()
     category = request.form.get("category", "").strip()
     year = request.form.get("year", "").strip()
@@ -510,7 +606,21 @@ def add_project():
 @app.route("/admin/projects/<int:project_id>/edit", methods=["POST"])
 @login_required
 def edit_project(project_id):
-    """Actualiza un proyecto existente."""
+    """
+    Actualiza la información de un proyecto existente en la base de datos.
+
+    Parámetros:
+        project_id (int): Identificador único del proyecto a editar.
+
+    Acciones:
+        - Captura los nuevos valores del formulario de edición.
+        - Si se adjuntó un nuevo archivo de imagen, lo guarda de forma segura y actualiza la ruta.
+        - Realiza la actualización SQL (UPDATE) sobre la fila correspondiente.
+        - Redirige al panel de administración.
+
+    Retorna:
+        Response: Redirección hacia la vista del panel administrativo.
+    """
     title = request.form.get("title", "").strip()
     category = request.form.get("category", "").strip()
     year = request.form.get("year", "").strip()
@@ -559,7 +669,15 @@ def edit_project(project_id):
 @app.route("/admin/projects/<int:project_id>/delete", methods=["POST"])
 @login_required
 def delete_project(project_id):
-    """Elimina un proyecto existente."""
+    """
+    Elimina permanentemente un proyecto de la base de datos.
+
+    Parámetros:
+        project_id (int): Identificador único del proyecto que se desea eliminar.
+
+    Retorna:
+        Response: Redirección hacia la vista del panel administrativo.
+    """
     with get_db() as conn:
         conn.execute("DELETE FROM projects WHERE id = ?", (project_id,))
         conn.commit()
@@ -570,7 +688,17 @@ def delete_project(project_id):
 @app.route("/admin/skills/new", methods=["POST"])
 @login_required
 def add_skill():
-    """Añade una nueva habilidad."""
+    """
+    Crea una nueva habilidad técnica (skill).
+
+    Acciones:
+        - Obtiene el nombre y la categoría seleccionada o personalizada.
+        - Inserta el registro en la tabla 'skills'.
+        - Redirige al panel de administración.
+
+    Retorna:
+        Response: Redirección hacia la vista del panel administrativo.
+    """
     name = request.form.get("name", "").strip()
     category = request.form.get("category", "").strip()
     custom_category = request.form.get("custom_category", "").strip()
@@ -591,7 +719,15 @@ def add_skill():
 @app.route("/admin/skills/<int:skill_id>/edit", methods=["POST"])
 @login_required
 def edit_skill(skill_id):
-    """Edita una habilidad existente."""
+    """
+    Actualiza el nombre o la categoría de una habilidad técnica existente.
+
+    Parámetros:
+        skill_id (int): Identificador único de la habilidad a editar.
+
+    Retorna:
+        Response: Redirección hacia la vista del panel administrativo.
+    """
     name = request.form.get("name", "").strip()
     category = request.form.get("category", "").strip()
     custom_category = request.form.get("custom_category", "").strip()
@@ -612,7 +748,15 @@ def edit_skill(skill_id):
 @app.route("/admin/skills/<int:skill_id>/delete", methods=["POST"])
 @login_required
 def delete_skill(skill_id):
-    """Elimina una habilidad."""
+    """
+    Elimina una habilidad técnica de la base de datos.
+
+    Parámetros:
+        skill_id (int): Identificador único de la habilidad que se desea eliminar.
+
+    Retorna:
+        Response: Redirección hacia la vista del panel administrativo.
+    """
     with get_db() as conn:
         conn.execute("DELETE FROM skills WHERE id = ?", (skill_id,))
         conn.commit()
@@ -622,11 +766,29 @@ def delete_skill(skill_id):
 # ── Error Handlers ──────────────────────────────────────────────────────────────
 @app.errorhandler(404)
 def page_not_found(e):
+    """
+    Manejador de error HTTP 404 (Página no encontrada).
+
+    Parámetros:
+        e (Exception): Excepción o error HTTP capturado por Flask.
+
+    Retorna:
+        tuple[str, int]: Plantilla '404.htm' renderizada y código de estado 404.
+    """
     return render_template("404.htm"), 404
 
 
 @app.errorhandler(503)
 def service_unavailable(e):
+    """
+    Manejador de error HTTP 503 (Servicio no disponible / Mantenimiento).
+
+    Parámetros:
+        e (Exception): Excepción o error HTTP capturado por Flask.
+
+    Retorna:
+        tuple[str, int]: Plantilla '503.htm' renderizada y código de estado 503.
+    """
     return render_template("503.htm"), 503
 
 
