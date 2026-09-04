@@ -1,9 +1,11 @@
 import os
 import sqlite3
 import hashlib
+import logging
 from datetime import datetime, timezone, timedelta
 from werkzeug.utils import secure_filename
-from flask import Flask, render_template, request, jsonify, redirect, url_for, flash, session
+from werkzeug.middleware.proxy_fix import ProxyFix
+from flask import Flask, render_template, request, jsonify, redirect, url_for, flash, session, Response
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from dotenv import load_dotenv
@@ -59,7 +61,35 @@ def format_colombia_date(dt_input):
 
 # ── App Configuration ──────────────────────────────────────────────────────────
 app = Flask(__name__)
-app.secret_key = os.environ.get("SECRET_KEY", "dev-secret-key-change-in-production")
+
+# Aplicar ProxyFix para que Flask detecte correctamente HTTPS, Host y la IP real
+# cuando se ejecuta detrás de Nginx (x_for=1, x_proto=1, x_host=1)
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
+
+_secret_key = os.environ.get("SECRET_KEY", "")
+if not _secret_key:
+    app.logger.warning(
+        "[SECURITY] SECRET_KEY no configurada. Usando valor de desarrollo. "
+        "Define SECRET_KEY en las variables de entorno en producción."
+    )
+    _secret_key = "dev-secret-key-change-in-production"
+app.secret_key = _secret_key
+
+# ── Configuración de cookies de sesión (seguras en producción) ──────────────────
+# Activa SESSION_COOKIE_SECURE=true en producción (requiere HTTPS)
+_cookie_secure_env = os.environ.get("SESSION_COOKIE_SECURE", "").strip().lower()
+if _cookie_secure_env in ("true", "1", "yes"):
+    app.config["SESSION_COOKIE_SECURE"] = True
+
+_cookie_httponly_env = os.environ.get("SESSION_COOKIE_HTTPONLY", "").strip().lower()
+if _cookie_httponly_env in ("false", "0", "no"):
+    app.config["SESSION_COOKIE_HTTPONLY"] = False
+else:
+    # Por defecto siempre HttpOnly (más seguro)
+    app.config["SESSION_COOKIE_HTTPONLY"] = True
+
+_cookie_samesite = os.environ.get("SESSION_COOKIE_SAMESITE", "Lax").strip()
+app.config["SESSION_COOKIE_SAMESITE"] = _cookie_samesite
 
 # ── Google OAuth Configuration ──────────────────────────────────────────────────
 oauth = OAuth(app)
@@ -188,13 +218,23 @@ def init_db():
         # Crear usuario admin por defecto si la tabla está vacía
         existing = conn.execute("SELECT id FROM users LIMIT 1").fetchone()
         if not existing:
-            default_password = generate_password_hash("admin123")
+            # En producción, configura ADMIN_DEFAULT_PASSWORD en las variables de entorno.
+            # Si no está definida, se usa 'admin123' como fallback de desarrollo ÚNICAMENTE.
+            admin_password = os.environ.get("ADMIN_DEFAULT_PASSWORD", "").strip()
+            if not admin_password:
+                admin_password = "admin123"
+                app.logger.warning(
+                    "[SECURITY] ADMIN_DEFAULT_PASSWORD no configurada. "
+                    "Se usó la contraseña de desarrollo 'admin123'. "
+                    "Cámbiala inmediatamente desde el panel de administración."
+                )
+            default_password = generate_password_hash(admin_password)
             conn.execute(
                 "INSERT INTO users (username, password) VALUES (?, ?)",
                 ("admin", default_password),
             )
             conn.commit()
-            print("[DB] Usuario admin creado con contraseña: admin123")
+            app.logger.info("[DB] Usuario admin creado correctamente desde init_db.")
 
         # Sembrar habilidades iniciales si la tabla está vacía
         existing_skills = conn.execute("SELECT id FROM skills LIMIT 1").fetchone()
@@ -355,7 +395,7 @@ def record_page_view(path="/"):
             )
             conn.commit()
     except Exception as e:
-        print(f"[PAGE VIEW ERROR] {e}")
+        app.logger.error("[PAGE VIEW ERROR] %s", e)
 
 
 # ── Routes ──────────────────────────────────────────────────────────────────────
@@ -585,10 +625,10 @@ def google_callback():
         return redirect(url_for("admin"))
 
     except Exception as e:
-        print(f"[GOOGLE OAUTH ERROR] {e}")
+        app.logger.error("[GOOGLE OAUTH ERROR] %s", e)
         return render_template(
             "login.html",
-            error=f"Error durante la autenticación con Google: {str(e)}",
+            error="Error durante la autenticación con Google. Por favor intenta de nuevo.",
             google_enabled=bool(GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET),
             allowed_email=ADMIN_ALLOWED_EMAIL,
         )
@@ -898,6 +938,49 @@ def delete_skill(skill_id):
         conn.execute("DELETE FROM skills WHERE id = ?", (skill_id,))
         conn.commit()
     return redirect(url_for("admin"))
+
+
+# ── SEO: Robots & Sitemap ───────────────────────────────────────────────────────
+# SITE_URL se configura en las variables de entorno en producción.
+# Ejemplo: SITE_URL=https://tudominio.com
+_SITE_URL = os.environ.get("SITE_URL", "").rstrip("/")
+
+
+@app.route("/robots.txt")
+def robots_txt():
+    """
+    Sirve el archivo robots.txt para indicar a los rastreadores las rutas permitidas.
+
+    Retorna:
+        Response: Contenido del robots.txt con tipo MIME text/plain.
+    """
+    content = (
+        "User-agent: *\n"
+        "Disallow: /admin\n"
+        "Disallow: /login\n"
+        "Disallow: /logout\n"
+    )
+    if _SITE_URL:
+        content += f"Sitemap: {_SITE_URL}/sitemap.xml\n"
+    return Response(content, mimetype="text/plain")
+
+
+@app.route("/sitemap.xml")
+def sitemap_xml():
+    """
+    Genera y sirve un sitemap XML básico para el portafolio.
+
+    Retorna:
+        Response: Contenido del sitemap XML con tipo MIME application/xml.
+    """
+    base = _SITE_URL or request.host_url.rstrip("/")
+    xml = (
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+        f'  <url><loc>{base}/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>\n'
+        '</urlset>'
+    )
+    return Response(xml, mimetype="application/xml")
 
 
 # ── Error Handlers ──────────────────────────────────────────────────────────────

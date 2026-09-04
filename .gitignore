@@ -1,6 +1,39 @@
+# Entorno virtual
 venv/
+.venv/
+
+# Caché de Python
 __pycache__/
 *.pyc
-instance/
+*.pyo
+*.pyd
+
+# Variables de entorno (contienen secretos — NUNCA subir)
 .env
-portfolio.db
+.env.*
+!.env.example
+
+# Base de datos SQLite
+*.db
+*.sqlite
+*.sqlite3
+
+# Instancia de Flask
+instance/
+
+# Logs
+*.log
+
+# Archivos de sistema / editor
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+.vscode/
+*.orig
+
+# Archivos temporales de pytest / coverage
+.pytest_cache/
+htmlcov/
+.coverage
