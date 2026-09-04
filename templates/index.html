@@ -8,6 +8,16 @@
   <meta name="description"
     content="Portafolio de Nicolás Valdez, desarrollador de software y estudiante de Ingeniería de Sistemas especializado en soluciones digitales funcionales y escalables.">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script>
+    (function() {
+      try {
+        var theme = localStorage.getItem('portfolio-theme');
+        if (theme === 'light') {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      } catch (e) {}
+    })();
+  </script>
 </head>
 
 <body>
@@ -58,105 +68,37 @@
     <section class="section" id="work">
       <div class="section-header">
         <h2 class="section-title">Trabajo Seleccionado</h2>
-        <span class="section-badge">04 proyectos</span>
+        <span class="section-badge">{{ '%02d' % (projects|length) }} proyectos</span>
       </div>
 
       <div class="work-grid">
-        <!-- Project 1 -->
-        <article class="project-card" data-accent="#149CEA">
+        {% for project in projects %}
+        <article class="project-card" data-accent="{{ project.accent_color }}">
           <div class="project-thumb">
-            <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&h=450&fit=crop&auto=format"
-              alt="Meridian Design System">
+            <img src="{{ project.image_url }}" alt="{{ project.title }}" loading="lazy">
             <div class="project-accent-overlay"></div>
-            <span class="project-year">2024</span>
+            <span class="project-year">{{ project.year }}</span>
           </div>
           <div class="project-body">
-            <p class="project-category">Sistema de Diseño · React</p>
-            <h3 class="project-title">Meridian Design System</h3>
-            <p class="project-desc">
-              Librería de componentes utilizada por 12 equipos de producto. Redujo la inconsistencia visual en un 80% y
-              el tiempo de handoff de diseño a desarrollo de 3 días a medio día.
-            </p>
+            <p class="project-category">{{ project.category }}</p>
+            <h3 class="project-title">
+              {% if project.project_url %}
+              <a href="{{ project.project_url }}" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: none;">
+                {{ project.title }} ↗
+              </a>
+              {% else %}
+              {{ project.title }}
+              {% endif %}
+            </h3>
+            <p class="project-desc">{{ project.description }}</p>
             <div class="project-tags">
-              <span class="project-tag">React</span>
-              <span class="project-tag">TypeScript</span>
-              <span class="project-tag">Storybook</span>
-              <span class="project-tag">Figma</span>
+              {% for tag in project.tag_list %}
+              <span class="project-tag">{{ tag }}</span>
+              {% endfor %}
             </div>
           </div>
         </article>
-
-        <!-- Project 2 -->
-        <article class="project-card" data-accent="#4ecdc4">
-          <div class="project-thumb">
-            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=450&fit=crop&auto=format"
-              alt="Cartograph Analytics">
-            <div class="project-accent-overlay"></div>
-            <span class="project-year">2024</span>
-          </div>
-          <div class="project-body">
-            <p class="project-category">Visualización de Datos · Full Stack</p>
-            <h3 class="project-title">Cartograph Analytics</h3>
-            <p class="project-desc">
-              Plataforma de análisis geoespacial en tiempo real que procesa más de 2M de eventos por hora. Desarrollé un
-              renderizador WebGL propio que redujo el tiempo de render de 4.2s a 180ms.
-            </p>
-            <div class="project-tags">
-              <span class="project-tag">Next.js</span>
-              <span class="project-tag">WebGL</span>
-              <span class="project-tag">PostgreSQL</span>
-              <span class="project-tag">Redis</span>
-            </div>
-          </div>
-        </article>
-
-        <!-- Project 3 -->
-        <article class="project-card" data-accent="#f7c06e">
-          <div class="project-thumb">
-            <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&h=450&fit=crop&auto=format"
-              alt="Folio CMS">
-            <div class="project-accent-overlay"></div>
-            <span class="project-year">2023</span>
-          </div>
-          <div class="project-body">
-            <p class="project-category">SaaS · Backend</p>
-            <h3 class="project-title">Folio CMS</h3>
-            <p class="project-desc">
-              CMS headless con constructor visual de consultas. 340 equipos de pago, $42k MRR. Construido en solitario
-              en 8 meses, posteriormente adquirido por una startup de infraestructura de contenido.
-            </p>
-            <div class="project-tags">
-              <span class="project-tag">Node.js</span>
-              <span class="project-tag">GraphQL</span>
-              <span class="project-tag">React</span>
-              <span class="project-tag">AWS</span>
-            </div>
-          </div>
-        </article>
-
-        <!-- Project 4 -->
-        <article class="project-card" data-accent="#ff6b9d">
-          <div class="project-thumb">
-            <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&h=450&fit=crop&auto=format"
-              alt="Pulse Notification Engine">
-            <div class="project-accent-overlay"></div>
-            <span class="project-year">2023</span>
-          </div>
-          <div class="project-body">
-            <p class="project-category">Infraestructura · Open Source</p>
-            <h3 class="project-title">Pulse Notification Engine</h3>
-            <p class="project-desc">
-              Sistema de orquestación de notificaciones multicanal. 4.7k estrellas en GitHub, usado en producción por
-              más de 200 empresas que envían 50M+ notificaciones al mes.
-            </p>
-            <div class="project-tags">
-              <span class="project-tag">Go</span>
-              <span class="project-tag">Kafka</span>
-              <span class="project-tag">Docker</span>
-              <span class="project-tag">Kubernetes</span>
-            </div>
-          </div>
-        </article>
+        {% endfor %}
       </div>
     </section>
 
@@ -167,42 +109,16 @@
       </div>
 
       <div class="skills-grid">
+        {% for category, skill_items in skills_by_category.items() %}
         <div class="skill-group">
-          <p class="skill-group-title">Lenguajes de Programación</p>
+          <p class="skill-group-title">{{ category }}</p>
           <ul class="skill-list">
-            <li class="skill-item"><span class="skill-bullet">◆</span> Python</li>
-            <li class="skill-item"><span class="skill-bullet">◆</span> PHP</li>
-            <li class="skill-item"><span class="skill-bullet">◆</span> JavaScript (ES6+)</li>
-            <li class="skill-item"><span class="skill-bullet">◆</span> HTML5 / CSS3</li>
+            {% for skill in skill_items %}
+            <li class="skill-item"><span class="skill-bullet">◆</span> {{ skill.name }}</li>
+            {% endfor %}
           </ul>
         </div>
-
-        <div class="skill-group">
-          <p class="skill-group-title">Frameworks &amp; Tecnologías Web</p>
-          <ul class="skill-list">
-            <li class="skill-item"><span class="skill-bullet">◆</span> Flask</li>
-            <li class="skill-item"><span class="skill-bullet">◆</span> Bootstrap / Tailwind CSS</li>
-            <li class="skill-item"><span class="skill-bullet">◆</span> Manipulación del DOM y AJAX</li>
-          </ul>
-        </div>
-
-        <div class="skill-group">
-          <p class="skill-group-title">Bases de Datos</p>
-          <ul class="skill-list">
-            <li class="skill-item"><span class="skill-bullet">◆</span> MariaDB</li>
-            <li class="skill-item"><span class="skill-bullet">◆</span> MySQL</li>
-          </ul>
-        </div>
-
-        <div class="skill-group">
-          <p class="skill-group-title">Herramientas &amp; Entorno</p>
-          <ul class="skill-list">
-            <li class="skill-item"><span class="skill-bullet">◆</span> Git / GitHub (Control de versiones)</li>
-            <li class="skill-item"><span class="skill-bullet">◆</span> Visual Studio Code</li>
-            <li class="skill-item"><span class="skill-bullet">◆</span> Linux (Entornos Mint / Bash)</li>
-            <li class="skill-item"><span class="skill-bullet">◆</span> VirtualBox (Virtualización)</li>
-          </ul>
-        </div>
+        {% endfor %}
       </div>
     </section>
 
@@ -281,9 +197,38 @@
               <span class="underline"></span>
             </div>
 
+            <!-- WhatsApp con Selector de País e Indicativo (Obligatorio) -->
+            <div class="phone-input-group">
+              <div class="country-picker-wrapper" id="country-picker-wrapper">
+                <button type="button" class="country-picker-btn" id="country-picker-btn" aria-haspopup="listbox" aria-expanded="false" title="Seleccionar país">
+                  <span class="country-flag" id="selected-flag">🇨🇴</span>
+                  <span class="country-code" id="selected-code">+57</span>
+                  <span class="picker-arrow">▾</span>
+                </button>
+                <input type="hidden" name="phone_code" id="phone_code" value="+57">
+
+                <!-- Menú desplegable con buscador -->
+                <div class="country-dropdown" id="country-dropdown">
+                  <div class="country-search-box">
+                    <input type="text" id="country-search-input" placeholder="Buscar país o indicativo..." autocomplete="off">
+                  </div>
+                  <ul class="country-list" id="country-list" role="listbox">
+                    <!-- Países generados por JS -->
+                  </ul>
+                </div>
+              </div>
+
+              <div class="input-container phone-number-container">
+                <input type="tel" id="whatsapp" name="whatsapp" required placeholder=" " autocomplete="tel">
+                <label for="whatsapp" class="label">WhatsApp</label>
+                <span class="underline"></span>
+              </div>
+            </div>
+
+            <!-- Correo electrónico (Opcional) -->
             <div class="input-container">
-              <input type="email" id="email" name="email" required placeholder=" ">
-              <label for="email" class="label">Correo electrónico</label>
+              <input type="email" id="email" name="email" placeholder=" ">
+              <label for="email" class="label">Correo electrónico (Opcional)</label>
               <span class="underline"></span>
             </div>
 
@@ -310,6 +255,75 @@
     <p>© 2026 Nicolás Valdez — Cali, Colombia</p>
     <p>Construido con Python · Flask · HTML5 · CSS3</p>
   </footer>
+
+  <!-- Floating Theme Switch -->
+  <div class="container theme-toggle-container">
+    <label for="switch" class="toggle" aria-label="Cambiar modo claro / oscuro" title="Cambiar tema">
+      <input type="checkbox" class="input" id="switch" />
+      <div class="icon icon--moon">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          width="32"
+          height="32"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 003.463-.69.75.75 0 01.981.98 10.503 10.503 0 01-9.694 6.46c-5.799 0-10.5-4.701-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 01.818.162z"
+            clip-rule="evenodd"
+          ></path>
+        </svg>
+      </div>
+
+      <div class="icon icon--sun">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          width="32"
+          height="32"
+        >
+          <path
+            d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z"
+          ></path>
+        </svg>
+      </div>
+    </label>
+  </div>
+
+  <!-- Cookie Consent Card -->
+  <div class="cookies-card" id="cookies-card" style="display: none;">
+    <p class="cookie-heading">Política de Cookies</p>
+    <p class="cookie-para">
+      Utilizamos cookies para optimizar tu experiencia y analizar el tráfico de visitas en el portafolio.
+    </p>
+    <div class="button-wrapper">
+      <button type="button" class="accept cookie-button" id="cookie-accept-btn">Aceptar</button>
+      <button type="button" class="reject cookie-button" id="cookie-reject-btn">Rechazar</button>
+    </div>
+    <button type="button" class="exit-button" id="cookie-exit-btn" aria-label="Cerrar aviso de cookies">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 162 162"
+        class="svgIconCross"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-width="17"
+          stroke="currentColor"
+          d="M9.01074 8.98926L153.021 153"
+        ></path>
+        <path
+          stroke-linecap="round"
+          stroke-width="17"
+          stroke="currentColor"
+          d="M9.01074 153L153.021 8.98926"
+        ></path>
+      </svg>
+    </button>
+  </div>
 
   <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>

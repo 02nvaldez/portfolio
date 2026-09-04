@@ -147,4 +147,149 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
+
+  // ── Country Dial Codes & Flag Picker for WhatsApp ──────────────────────────
+  const countries = [
+    { name: "Colombia", code: "+57", flag: "🇨🇴" },
+    { name: "Estados Unidos", code: "+1", flag: "🇺🇸" },
+    { name: "España", code: "+34", flag: "🇪🇸" },
+    { name: "México", code: "+52", flag: "🇲🇽" },
+    { name: "Argentina", code: "+54", flag: "🇦🇷" },
+    { name: "Chile", code: "+56", flag: "🇨🇱" },
+    { name: "Perú", code: "+51", flag: "🇵🇪" },
+    { name: "Ecuador", code: "+593", flag: "🇪🇨" },
+    { name: "Venezuela", code: "+58", flag: "🇻🇪" },
+    { name: "Panamá", code: "+507", flag: "🇵🇦" },
+    { name: "Costa Rica", code: "+506", flag: "🇨🇷" },
+    { name: "Guatemala", code: "+502", flag: "🇬🇹" },
+    { name: "Honduras", code: "+504", flag: "🇭🇳" },
+    { name: "El Salvador", code: "+503", flag: "🇸🇻" },
+    { name: "Nicaragua", code: "+505", flag: "🇳🇮" },
+    { name: "Bolivia", code: "+591", flag: "🇧🇴" },
+    { name: "Paraguay", code: "+595", flag: "🇵🇾" },
+    { name: "Uruguay", code: "+598", flag: "🇺🇾" },
+    { name: "República Dominicana", code: "+1-809", flag: "🇩🇴" },
+    { name: "Puerto Rico", code: "+1-787", flag: "🇵🇷" },
+    { name: "Brasil", code: "+55", flag: "🇧🇷" },
+    { name: "Canadá", code: "+1", flag: "🇨🇦" },
+    { name: "Reino Unido", code: "+44", flag: "🇬🇧" },
+    { name: "Alemania", code: "+49", flag: "🇩🇪" },
+    { name: "Francia", code: "+33", flag: "🇫🇷" },
+    { name: "Italia", code: "+39", flag: "🇮🇹" },
+    { name: "Portugal", code: "+351", flag: "🇵🇹" },
+    { name: "Australia", code: "+61", flag: "🇦🇺" },
+    { name: "Japón", code: "+81", flag: "🇯🇵" },
+    { name: "Corea del Sur", code: "+82", flag: "🇰🇷" },
+    { name: "India", code: "+91", flag: "🇮🇳" },
+    { name: "China", code: "+86", flag: "🇨🇳" }
+  ];
+
+  const countryPickerWrapper = document.getElementById('country-picker-wrapper');
+  const countryPickerBtn = document.getElementById('country-picker-btn');
+  const countryDropdown = document.getElementById('country-dropdown');
+  const countrySearchInput = document.getElementById('country-search-input');
+  const countryList = document.getElementById('country-list');
+  const selectedFlag = document.getElementById('selected-flag');
+  const selectedCode = document.getElementById('selected-code');
+  const phoneCodeInput = document.getElementById('phone_code');
+
+  if (countryPickerBtn && countryDropdown && countryList) {
+    function renderCountryList(filterText = '') {
+      const query = filterText.toLowerCase().trim();
+      countryList.innerHTML = '';
+
+      const filtered = countries.filter(c =>
+        c.name.toLowerCase().includes(query) || c.code.includes(query)
+      );
+
+      if (filtered.length === 0) {
+        countryList.innerHTML = '<li class="country-no-results">No se encontraron países</li>';
+        return;
+      }
+
+      filtered.forEach(c => {
+        const li = document.createElement('li');
+        li.className = 'country-option';
+        li.setAttribute('role', 'option');
+        li.innerHTML = `
+          <span class="country-opt-flag">${c.flag}</span>
+          <span class="country-opt-name">${c.name}</span>
+          <span class="country-opt-code">${c.code}</span>
+        `;
+        li.addEventListener('click', () => {
+          selectedFlag.textContent = c.flag;
+          selectedCode.textContent = c.code;
+          phoneCodeInput.value = c.code;
+          countryDropdown.classList.remove('active');
+          countryPickerBtn.setAttribute('aria-expanded', 'false');
+          document.getElementById('whatsapp')?.focus();
+        });
+        countryList.appendChild(li);
+      });
+    }
+
+    renderCountryList();
+
+    countryPickerBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isActive = countryDropdown.classList.toggle('active');
+      countryPickerBtn.setAttribute('aria-expanded', isActive ? 'true' : 'false');
+      if (isActive) {
+        countrySearchInput.value = '';
+        renderCountryList();
+        setTimeout(() => countrySearchInput.focus(), 100);
+      }
+    });
+
+    countrySearchInput.addEventListener('input', (e) => {
+      renderCountryList(e.target.value);
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!countryPickerWrapper.contains(e.target)) {
+        countryDropdown.classList.remove('active');
+        countryPickerBtn.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
+
+  // ── Cookie Policy Card Logic ───────────────────────────────────────────────
+  const cookiesCard = document.getElementById('cookies-card');
+  const acceptBtn = document.getElementById('cookie-accept-btn');
+  const rejectBtn = document.getElementById('cookie-reject-btn');
+  const exitBtn = document.getElementById('cookie-exit-btn');
+
+  if (cookiesCard) {
+    const cookieConsent = localStorage.getItem('portfolio-cookie-consent');
+    // Solo mostrar si no ha aceptado ni rechazado
+    if (!cookieConsent) {
+      cookiesCard.style.display = 'flex';
+      // Animación de entrada suave tras unos milisegundos
+      setTimeout(() => {
+        cookiesCard.classList.add('show');
+      }, 400);
+    }
+
+    function dismissCookieCard(status) {
+      cookiesCard.classList.remove('show');
+      try {
+        localStorage.setItem('portfolio-cookie-consent', status);
+      } catch (e) {
+        console.error('Failed to save cookie consent', e);
+      }
+      setTimeout(() => {
+        cookiesCard.style.display = 'none';
+      }, 350);
+    }
+
+    if (acceptBtn) {
+      acceptBtn.addEventListener('click', () => dismissCookieCard('accepted'));
+    }
+    if (rejectBtn) {
+      rejectBtn.addEventListener('click', () => dismissCookieCard('rejected'));
+    }
+    if (exitBtn) {
+      exitBtn.addEventListener('click', () => dismissCookieCard('closed'));
+    }
+  }
 });
