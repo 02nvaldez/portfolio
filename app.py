@@ -3,9 +3,17 @@ import sqlite3
 import hashlib
 from datetime import datetime, timezone, timedelta
 from werkzeug.utils import secure_filename
-from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
+from flask import Flask, render_template, request, jsonify, redirect, url_for, flash, session
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
+from dotenv import load_dotenv
+from authlib.integrations.flask_client import OAuth
+
+# Cargar variables de entorno desde .env si existe
+load_dotenv()
+
+# ── Correo Autorizado para Administración ───────────────────────────────────────
+ADMIN_ALLOWED_EMAIL = os.environ.get("ADMIN_ALLOWED_EMAIL", "nicovalman0206@gmail.com").strip().lower()
 
 # ── Timezone & Date Formatting (Colombia UTC-5) ─────────────────────────────────
 COLOMBIA_TZ = timezone(timedelta(hours=-5))
@@ -52,6 +60,19 @@ def format_colombia_date(dt_input):
 # ── App Configuration ──────────────────────────────────────────────────────────
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "dev-secret-key-change-in-production")
+
+# ── Google OAuth Configuration ──────────────────────────────────────────────────
+oauth = OAuth(app)
+GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", "").strip()
+GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", "").strip()
+
+oauth.register(
+    name="google",
+    client_id=GOOGLE_CLIENT_ID,
+    client_secret=GOOGLE_CLIENT_SECRET,
+    server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
+    client_kwargs={"scope": "openid email profile"},
+)
 
 # Registrar filtro Jinja para formatear fechas directamente si se desea
 app.jinja_env.filters["format_date"] = format_colombia_date
@@ -101,7 +122,8 @@ def init_db():
             CREATE TABLE IF NOT EXISTS users (
                 id       INTEGER PRIMARY KEY AUTOINCREMENT,
                 username TEXT    NOT NULL UNIQUE,
-                password TEXT    NOT NULL
+                password TEXT,
+                email    TEXT UNIQUE
             )
         """)
 
@@ -154,6 +176,14 @@ def init_db():
             )
         """)
         conn.commit()
+
+        # Migración: asegurar que la columna email existe en users
+        cursor = conn.execute("PRAGMA table_info(users)")
+        columns = [row[1] for row in cursor.fetchall()]
+        if "email" not in columns:
+            conn.execute("ALTER TABLE users ADD COLUMN email TEXT")
+            conn.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_users_email ON users(email)")
+            conn.commit()
 
         # Crear usuario admin por defecto si la tabla está vacía
         existing = conn.execute("SELECT id FROM users LIMIT 1").fetchone()
@@ -264,9 +294,10 @@ login_manager.login_message = "Debes iniciar sesión para acceder al panel."
 class User(UserMixin):
     """Modelo de usuario cargado desde la base de datos."""
 
-    def __init__(self, id, username):
+    def __init__(self, id, username, email=None):
         self.id = id
         self.username = username
+        self.email = email
 
 
 @login_manager.user_loader
@@ -281,9 +312,9 @@ def load_user(user_id):
         User | None: Instancia del modelo User si se encuentra en la base de datos, o None en caso contrario.
     """
     with get_db() as conn:
-        row = conn.execute("SELECT id, username FROM users WHERE id = ?", (user_id,)).fetchone()
+        row = conn.execute("SELECT id, username, email FROM users WHERE id = ?", (user_id,)).fetchone()
     if row:
-        return User(row["id"], row["username"])
+        return User(row["id"], row["username"], row["email"] if "email" in row.keys() else None)
     return None
 
 
@@ -442,19 +473,125 @@ def login():
 
         with get_db() as conn:
             row = conn.execute(
-                "SELECT id, username, password FROM users WHERE username = ?",
+                "SELECT id, username, password, email FROM users WHERE username = ?",
                 (username,),
             ).fetchone()
 
         if row and check_password_hash(row["password"], password):
-            user = User(row["id"], row["username"])
+            user = User(row["id"], row["username"], row["email"] if "email" in row.keys() else None)
             login_user(user)
             next_page = request.args.get("next")
             return redirect(next_page or url_for("admin"))
         else:
             error = "Usuario o contraseña incorrectos."
 
-    return render_template("login.html", error=error)
+    return render_template(
+        "login.html",
+        error=error,
+        google_enabled=bool(GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET),
+        allowed_email=ADMIN_ALLOWED_EMAIL,
+    )
+
+
+@app.route("/login/google")
+def google_login():
+    """
+    Inicia el flujo de autenticación OAuth 2.0 con Google.
+
+    Acciones:
+        - Verifica que las credenciales GOOGLE_CLIENT_ID y GOOGLE_CLIENT_SECRET estén configuradas.
+        - Si no están presentes en .env, redirige al login mostrando un mensaje descriptivo.
+        - Genera la URI de callback ('/login/google/callback') y redirige al consentimiento de Google.
+
+    Retorna:
+        Response: Redirección hacia el servidor de autenticación de Google.
+    """
+    if not GOOGLE_CLIENT_ID or not GOOGLE_CLIENT_SECRET:
+        return render_template(
+            "login.html",
+            error="Debes configurar GOOGLE_CLIENT_ID y GOOGLE_CLIENT_SECRET en tu archivo .env para usar el login con Google.",
+            google_enabled=False,
+            allowed_email=ADMIN_ALLOWED_EMAIL,
+        )
+
+    redirect_uri = url_for("google_callback", _external=True)
+    return oauth.google.authorize_redirect(redirect_uri)
+
+
+@app.route("/login/google/callback")
+def google_callback():
+    """
+    Callback de redirección tras la autorización en Google OAuth.
+
+    Acciones:
+        - Intercambia el código de autorización por el token de acceso.
+        - Extrae los datos del perfil y correo electrónico del usuario desde Google (userinfo).
+        - Valida que el correo corresponda exactamente a ADMIN_ALLOWED_EMAIL (nicovalman0206@gmail.com).
+        - Si el correo no está autorizado, deniega el acceso con mensaje explicativo.
+        - Si está autorizado, busca o sincroniza el usuario en la base de datos, lo autentica vía Flask-Login y lo redirige al panel de administración.
+
+    Retorna:
+        Response: Redirección al panel de administración o vista de login con error de autorización.
+    """
+    try:
+        token = oauth.google.authorize_access_token()
+        user_info = token.get("userinfo") or oauth.google.userinfo()
+        email = (user_info.get("email") or "").strip().lower()
+        name = user_info.get("name") or user_info.get("given_name") or "Nicolás"
+
+        if not email:
+            return render_template(
+                "login.html",
+                error="No se pudo obtener la dirección de correo desde tu cuenta de Google.",
+                google_enabled=bool(GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET),
+                allowed_email=ADMIN_ALLOWED_EMAIL,
+            )
+
+        # Validación estricta del correo autorizado
+        if email != ADMIN_ALLOWED_EMAIL:
+            return render_template(
+                "login.html",
+                error=f"Acceso denegado: El correo '{email}' no está autorizado para acceder al panel.",
+                google_enabled=bool(GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET),
+                allowed_email=ADMIN_ALLOWED_EMAIL,
+            )
+
+        # Buscar usuario en la base de datos o asociar el correo a la cuenta admin
+        with get_db() as conn:
+            user_row = conn.execute("SELECT id, username, email FROM users WHERE email = ?", (email,)).fetchone()
+
+            if not user_row:
+                # Si no existe por email, asociarlo al usuario admin existente o crear uno nuevo
+                admin_row = conn.execute("SELECT id, username FROM users WHERE username = 'admin'").fetchone()
+                if admin_row:
+                    conn.execute("UPDATE users SET email = ? WHERE id = ?", (email, admin_row["id"]))
+                    conn.commit()
+                    user_id = admin_row["id"]
+                    username = admin_row["username"]
+                else:
+                    cursor = conn.execute(
+                        "INSERT INTO users (username, password, email) VALUES (?, ?, ?)",
+                        (name, None, email),
+                    )
+                    conn.commit()
+                    user_id = cursor.lastrowid
+                    username = name
+            else:
+                user_id = user_row["id"]
+                username = user_row["username"]
+
+        user = User(user_id, username, email)
+        login_user(user)
+        return redirect(url_for("admin"))
+
+    except Exception as e:
+        print(f"[GOOGLE OAUTH ERROR] {e}")
+        return render_template(
+            "login.html",
+            error=f"Error durante la autenticación con Google: {str(e)}",
+            google_enabled=bool(GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET),
+            allowed_email=ADMIN_ALLOWED_EMAIL,
+        )
 
 
 @app.route("/logout")
